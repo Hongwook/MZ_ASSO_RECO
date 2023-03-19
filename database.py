@@ -122,8 +122,19 @@ class Queries:
     recommender_query = '''
     select *
     from cscart_users_recommenders
-    where created_at between "{}" and "{}"
+    where created_at between "{}" and "{}";
     '''
+
+    association_reco_insert_query = '''
+    INSERT INTO association_recommendation(antecedents, consequents, lift, ante_prod_nm, cons_prod_nm, inventory_qty, system_date)
+    VALUES (%(antecedents)s, %(consequents)s, %(lift)s, %(ante_prod_nm)s, %(cons_prod_nm)s, %(inventory_qty)s, %(system_date)s);
+    '''
+
+    association_gen_pop_insert_query = '''
+    INSERT INTO association_general_popular(product_id, recent_sales, category_M, product_name_kor, inventory_qty, system_date)
+    VALUES (%(product_id) s, %(recent_sales) s, %(category_M) s, %(product_name_kor) s, %(inventory_qty) s, %(system_date)s);
+    '''
+
 
 class DBImport():
     def __init__(self, db_type='cscart', db_info_path='mz_db_password.json'):
@@ -140,10 +151,18 @@ class DBImport():
         self.__passwd = db_info_dict['passwd']  # 비밀번호에 해당하여 비공개 속성(private attribute) 으로 '__' 처리
         self.db = db_info_dict['db']
 
-
     def data_import(self, query):
         self.connection = pymysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.__passwd,
                                           db=self.db)
         data = pd.read_sql(query, con=self.connection)
-        self.connection.close() # connection은 init 할때 호출하기 때문에 여기서 close 하면 해당 함수 재사용 불가.
+        self.connection.close()  # connection은 init 할때 호출하기 때문에 여기서 close 하면 해당 함수 재사용 불가.
         return data
+
+    def data_insert(self, query, data):
+        self.connection = pymysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.__passwd,
+                                          db=self.db)
+        data = data.to_dict('records')
+        cursor = self.connection.cursor()
+        cursor.executemany(query, data)
+        self.connection.commit()
+        self.connection.close()
