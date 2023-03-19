@@ -17,7 +17,7 @@ def get_association_recommendation():
     end_date = datetime.now().strftime('%Y-%m-%d')
     start_date = (datetime.now() - timedelta(days=365 * 2)).strftime('%Y-%m-%d')  # 최근 2년간의 판매 데이터를 바탕으로 연관분석 진행
     query_obj = Queries(start_date, end_date)
-    dbimport_obj = DBImport(db_type='cscart')
+    dbimport_obj = DBconnection(db_type='cscart')
 
     analytics = dbimport_obj.data_import(query_obj.analytics_query)
     # 재고 테이블 로드 및 전처리

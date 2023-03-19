@@ -136,7 +136,7 @@ class Queries:
     '''
 
 
-class DBImport():
+class DBconnection():
     def __init__(self, db_type='cscart', db_info_path='mz_db_password.json'):
         # get database password
         with open(db_info_path, 'rb') as file:

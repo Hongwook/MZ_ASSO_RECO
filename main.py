@@ -17,6 +17,6 @@ asso_reco = get_association_recommendation()
 gen_pop = get_general_popular(mode='fixed')
 
 # data insert
-dbinsert_obj = DBImport(db_type='analytics')  # dbimport_obj: cscart / dbinsert_obj: analytics
+dbinsert_obj = DBconnection(db_type='analytics')  # dbimport_obj: cscart / dbinsert_obj: analytics
 dbinsert_obj.data_insert(query_obj.association_reco_insert_query, asso_reco)
 dbinsert_obj.data_insert(query_obj.association_gen_pop_insert_query, gen_pop)
